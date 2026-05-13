@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ctypes
+import functools
 import glob
 import os
 import subprocess
@@ -36,6 +37,7 @@ _LAST_DARWIN_HIDAPI_TRIED: list[str] = []
 _ctypes_orig_load_library = ctypes.cdll.LoadLibrary
 
 
+@functools.lru_cache(maxsize=1)
 def _brew_prefix_hidapi() -> str | None:
     try:
         r = subprocess.run(
