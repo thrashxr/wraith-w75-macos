@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wraith-w75"
+version = "0.1.0"
+description = "Open-source SDK and CLI for Wraith W75 / W75 Pro on macOS (vendor HID RGB and future protocol)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "hid>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+# Faz 2 (API) — varsayılan kuruluma dahil değil:
+# api = ["fastapi", "uvicorn"]
+
+[project.scripts]
+wraith = "wraith_cli.main:main"
+
+[tool.setuptools]
+packages = ["wraith_protocol", "wraith_core", "wraith_cli", "wraith_api"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+markers = [
+    "integration: requires physical Wraith W75 (USB); run with: pytest --override-ini \"addopts=\" -m integration",
+]
+addopts = "-m \"not integration\""

@@ -1,0 +1,60 @@
+{
+  "device_count": 7,
+  "candidate_count": 2,
+  "vendor_usage_page_found": true,
+  "any_openable": true,
+  "selected_candidate": {
+    "vendor_id": 1046,
+    "product_id": 29554,
+    "path": "DevSrvsID:<redacted>",
+    "interface_number": 2,
+    "usage_page": 65307,
+    "usage": 145,
+    "manufacturer_string": "",
+    "product_string": "Wraith W75",
+    "serial_number": "",
+    "release_number": 0,
+    "openable": true,
+    "open_error": null,
+    "candidate_role": "vendor_control_candidate"
+  },
+  "selected_reason": "First openable interface in ConnectionManager order (index 0); candidate_role=vendor_control_candidate.",
+  "recommendation": "Device looks compatible with the RGB path this project uses. You may run `wraith debug probe --test-rgb --confirm` to send one static lighting packet (same path as normal `set-color`).",
+  "rgb_ordered_candidates": [
+    {
+      "vendor_id": 1046,
+      "product_id": 29554,
+      "path": "DevSrvsID:<redacted>",
+      "interface_number": 2,
+      "usage_page": 65307,
+      "usage": 145,
+      "manufacturer_string": "",
+      "product_string": "Wraith W75",
+      "serial_number": "",
+      "release_number": 0,
+      "openable": true,
+      "open_error": null,
+      "candidate_role": "vendor_control_candidate"
+    },
+    {
+      "vendor_id": 1046,
+      "product_id": 29554,
+      "path": "DevSrvsID:<redacted>",
+      "interface_number": 1,
+      "usage_page": 1,
+      "usage": 6,
+      "manufacturer_string": "",
+      "product_string": "Wraith W75",
+      "serial_number": "",
+      "release_number": 0,
+      "openable": false,
+      "open_error": "unable to open device: hid_open_path: failed to open IOHIDDevice from mach entry: (0xE00002C1) (iokit/common) privilege violation",
+      "candidate_role": "keyboard_candidate"
+    }
+  ],
+  "rgb_test_requested": true,
+  "rgb_test": {
+    "status": "ok",
+    "message": "one static RGB packet sent"
+  }
+}

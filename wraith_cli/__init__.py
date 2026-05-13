@@ -1,0 +1,1 @@
+"""Typer-free CLI package."""
