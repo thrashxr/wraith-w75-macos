@@ -6,6 +6,7 @@ import ctypes
 import functools
 import glob
 import os
+import shutil
 import subprocess
 import sys
 import threading
@@ -39,9 +40,12 @@ _ctypes_orig_load_library = ctypes.cdll.LoadLibrary
 
 @functools.lru_cache(maxsize=1)
 def _brew_prefix_hidapi() -> str | None:
+    brew_path = shutil.which("brew")
+    if not brew_path:
+        return None
     try:
         r = subprocess.run(
-            ["brew", "--prefix", "hidapi"],
+            [brew_path, "--prefix", "hidapi"],
             capture_output=True,
             text=True,
             timeout=8,
