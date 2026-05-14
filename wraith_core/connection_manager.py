@@ -170,6 +170,7 @@ class ConnectionManager:
         self._state: State = "disconnected"
         self._open_path_repr: str | None = None
         self._backoff_index = 0
+        self._reconnect_ev = threading.Event()
 
     @property
     def state(self) -> State:
@@ -205,6 +206,8 @@ class ConnectionManager:
                 self._open_path_repr = repr(path)
                 self._backoff_index = 0
                 self._emit_state("connected")
+                self._reconnect_ev.set()
+                self._reconnect_ev.clear()
                 return True
             self._emit_state("disconnected")
             return False
@@ -222,6 +225,8 @@ class ConnectionManager:
         with self._lock:
             self._close_nolock()
             self._emit_state("disconnected")
+            self._reconnect_ev.set()
+            self._reconnect_ev.clear()
 
     def ensure_connected(self) -> None:
         """Raise ``DeviceNotFound`` if the keyboard is not attached or no path opens."""
@@ -246,10 +251,13 @@ class ConnectionManager:
             }
 
     def _sleep_backoff(self) -> None:
-        idx = min(self._backoff_index, len(_BACKOFF_S) - 1)
-        time.sleep(_BACKOFF_S[idx])
-        if self._backoff_index < len(_BACKOFF_S) - 1:
-            self._backoff_index += 1
+        with self._lock:
+            idx = min(self._backoff_index, len(_BACKOFF_S) - 1)
+            timeout = _BACKOFF_S[idx]
+        self._reconnect_ev.wait(timeout=timeout)
+        with self._lock:
+            if self._backoff_index < len(_BACKOFF_S) - 1:
+                self._backoff_index += 1
 
     def set_rgb(
         self,
@@ -278,8 +286,7 @@ class ConnectionManager:
                 with self._lock:
                     if self._device is None:
                         raise TransportError("HID device became None after connect")
-                    self._device.write(bytes(payload))
-                with self._lock:
+                    self._device.write(payload)
                     self._backoff_index = 0
                 return
             except write_errors as exc:
