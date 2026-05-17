@@ -110,3 +110,9 @@ Default `pytest` excludes `@pytest.mark.integration` via `addopts` in `pyproject
 ```bash
 python examples/w75_demo.py
 ```
+
+---
+
+## Acknowledgements
+
+This project was developed with research, implementation, and debugging support from Claude, Gemini, and ChatGPT.
