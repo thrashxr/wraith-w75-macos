@@ -18,6 +18,16 @@ def _mode_to_int(name: str) -> int:
         raise argparse.ArgumentTypeError(f"unknown mode {name!r}; expected static|breathe") from exc
 
 
+def _uint8(value: str) -> int:
+    try:
+        ivalue = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(f"{value!r} is not a valid integer") from exc
+    if not (0 <= ivalue <= 255):
+        raise argparse.ArgumentTypeError(f"{ivalue} is out of range (0-255)")
+    return ivalue
+
+
 def cmd_status(_ns: argparse.Namespace) -> int:
     mgr = ConnectionManager()
     try:
@@ -169,13 +179,13 @@ def main(argv: list[str] | None = None) -> int:
     p_status.set_defaults(func=cmd_status)
 
     p_rgb = sub.add_parser("set-color", help="Send RGB / lighting command via vendor HID")
-    p_rgb.add_argument("--r", type=int, default=255, metavar="0-255")
-    p_rgb.add_argument("--g", type=int, default=0, metavar="0-255")
-    p_rgb.add_argument("--b", type=int, default=0, metavar="0-255")
+    p_rgb.add_argument("--r", type=_uint8, default=255, metavar="0-255")
+    p_rgb.add_argument("--g", type=_uint8, default=0, metavar="0-255")
+    p_rgb.add_argument("--b", type=_uint8, default=0, metavar="0-255")
     p_rgb.add_argument("--mode", type=str, required=True, choices=["static", "breathe"])
-    p_rgb.add_argument("--speed", type=int, default=3)
-    p_rgb.add_argument("--brightness", type=int, default=5)
-    p_rgb.add_argument("--direction", type=int, default=0)
+    p_rgb.add_argument("--speed", type=_uint8, default=3, metavar="0-255")
+    p_rgb.add_argument("--brightness", type=_uint8, default=5, metavar="0-255")
+    p_rgb.add_argument("--direction", type=_uint8, default=0, metavar="0-255")
     p_rgb.add_argument(
         "--max-retries",
         type=int,
